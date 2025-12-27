@@ -1,0 +1,30 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-lint:
+    name: Build & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'yarn'
+
+      - name: 🧶 Install Dependencies
+        # --frozen-lockfile ensures we use the EXACT versions from yarn.lock
+        run: yarn install --frozen-lockfile
+
+      - name: 🧹 Run Linter
+        # Fails if there are ESLint errors (crucial for keeping code clean)
+        run: yarn lint

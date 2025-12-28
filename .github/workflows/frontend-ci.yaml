@@ -28,6 +28,7 @@ jobs:
         uses: creyD/prettier_action@v4.6
         with:
           no_commit: true
+          commit_message: "Prettified Code!"
 
       - name: Run Linter
         run: yarn lint

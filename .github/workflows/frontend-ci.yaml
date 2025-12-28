@@ -14,6 +14,9 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
 
       - name: Setup Node.js 24
         uses: actions/setup-node@v6
@@ -23,6 +26,15 @@ jobs:
 
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
-
+      
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          commit_message: "chore: auto-fix prettier formatting"
+          prettier_options: "**/*.{js,jsx,ts,tsx,json,yaml,yml,md,css,scss}"
+        
+      - name: Reinstall Dependencies (if needed)
+        run: yarn install --frozen-lockfile
+      
       - name: Run Linter
         run: yarn lint

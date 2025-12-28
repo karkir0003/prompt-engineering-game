@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import Image from "next/image";
 import type { ResultViewProps } from "./PromptConsole.types";
+import { ImageDisplay } from "@/components/common/image/ImageDisplay";
 
 export function ResultView({ result, onReset }: ResultViewProps) {
   return (
@@ -13,14 +13,7 @@ export function ResultView({ result, onReset }: ResultViewProps) {
         <p className="text-muted-foreground">Here is the AI result:</p>
       </div>
       <Card className="p-4 border-2 border-primary/20 overflow-hidden space-y-4">
-        <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-muted">
-          <Image
-            src={result.imageUrl}
-            alt="AI Generation"
-            fill
-            className="object-cover"
-          />
-        </div>
+        <ImageDisplay src={result.imageUrl} alt="AI Generation" />
         <div className="flex items-center justify-between">
           <div className="text-sm font-medium text-muted-foreground">
             Similarity Score

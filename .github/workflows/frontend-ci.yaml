@@ -34,7 +34,7 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           commit_message: "chore: auto-fix prettier formatting"
-          file_pattern: "**/*.{js,jsx,ts,tsx,json,yaml,yml,md,css,scss}"
+          prettier_options: "**/*.{js,jsx,ts,tsx,json,yaml,yml,md,css,scss}"
       
       - name: Run Linter
         run: yarn lint

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ImageAttribution } from "@/components/common/image/ImageAttribution";

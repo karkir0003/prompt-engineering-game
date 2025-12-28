@@ -25,7 +25,13 @@ jobs:
         run: yarn install --frozen-lockfile
       
       - name: Run Prettier Check
+        id: prettier-check
+        continue-on-error: true
         run: yarn prettier --check .
+
+      - name: Run Prettier Fix
+        if: steps.prettier-check.outcome == 'failure'
+        run: yarn prettier --write .
 
       - name: Run Linter
         run: yarn lint

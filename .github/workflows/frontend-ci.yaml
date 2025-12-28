@@ -27,8 +27,8 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v4.6
         with:
-          no_commit: true
-          commit_message: "Prettified Code!"
-
+          commit_message: "chore: auto-fix prettier formatting"
+          file_pattern: "**/*.{js,jsx,ts,tsx,json,yaml,yml,md,css,scss}"
+      
       - name: Run Linter
         run: yarn lint

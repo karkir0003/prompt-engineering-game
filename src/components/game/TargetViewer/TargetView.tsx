@@ -11,11 +11,7 @@ interface TargetViewerProps {
 export function TargetViewer({ imageUrl, photographer }: TargetViewerProps) {
   return (
     <Card className="relative overflow-hidden aspect-square h-full max-h-[600px] group border-border/50 p-0">
-      <ImageDisplay
-        src={imageUrl}
-        alt="Target to replicate"
-        priority
-      />
+      <ImageDisplay src={imageUrl} alt="Target to replicate" priority />
 
       {/* Overlay Info */}
       <div className="absolute top-4 left-4">

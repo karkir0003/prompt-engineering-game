@@ -15,10 +15,12 @@ export function ImageDisplay({
   className,
 }: ImageDisplayProps) {
   return (
-    <div className={cn(
-      "relative aspect-square w-full rounded-lg overflow-hidden bg-muted",
-      className
-    )}>
+    <div
+      className={cn(
+        "relative aspect-square w-full rounded-lg overflow-hidden bg-muted",
+        className,
+      )}
+    >
       <Image
         src={src}
         alt={alt}

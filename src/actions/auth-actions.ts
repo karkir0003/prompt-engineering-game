@@ -15,7 +15,7 @@ export type AuthState = {
  * Sign in with email and password
  */
 export async function signInWithPassword(
-  prevState: AuthState, // <--- Added for useActionState compatibility
+  prevState: AuthState,
   formData: FormData,
 ): Promise<AuthState> {
   const email = formData.get("email") as string;
@@ -35,7 +35,6 @@ export async function signInWithPassword(
     return { success: false, error: error.message };
   }
 
-  // Success! Redirect OUTSIDE of any try/catch
   revalidatePath("/", "layout");
   redirect("/daily-challenge");
 }
@@ -68,7 +67,6 @@ export async function signUpWithPassword(
     return { success: false, error: error.message };
   }
 
-  // Usually we don't redirect on signup immediately if email confirmation is on
   return {
     success: true,
     message: "Check your email to confirm your account",

@@ -10,6 +10,8 @@ jobs:
   build-and-lint:
     name: Build & Lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Repo
@@ -30,6 +32,7 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v4.6
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           commit_message: "chore: auto-fix prettier formatting"
           file_pattern: "src"
           prettier_options: --write **/*.{js,jsx,ts,tsx,json,yaml,yml,md,css,scss}

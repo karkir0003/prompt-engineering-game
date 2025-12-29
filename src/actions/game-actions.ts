@@ -19,7 +19,7 @@ export async function submitGuess(formData: FormData): Promise<GameResult> {
     // A random Unsplash image to pretend the AI generated it
     imageUrl:
       "https://images.unsplash.com/photo-1739525257989-14a852654359?w=800&auto=format&fit=crop&q=60",
-    score: 0.88, // 88% Match
+    score: 0.88,
     message: "Great attempt!",
   };
 }

@@ -10,7 +10,7 @@ export default async function DailyChallengePage() {
   const mockTarget = {
     imageUrl:
       "https://images.unsplash.com/photo-1605806616949-1e87b487bc2a?q=80&w=1000&auto=format&fit=crop",
-    photographer: "Karthik Subramanian",
+    photographer: "Sample Photographer",
   };
 
   return (

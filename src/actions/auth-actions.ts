@@ -15,11 +15,7 @@ export type AuthState = {
  * Sign in with email and password
  */
 export async function signInWithPassword(
-<<<<<<< HEAD
   prevState: AuthState,
-=======
-  prevState: AuthState, // <--- Added for useActionState compatibility
->>>>>>> fe3f4976dbdd006691f472e150a791918b0f6aff
   formData: FormData,
 ): Promise<AuthState> {
   const email = formData.get("email") as string;

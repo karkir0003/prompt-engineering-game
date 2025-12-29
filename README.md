@@ -25,39 +25,39 @@ Promptle is a web-based game where users compete to recreate a "target image" us
 
 ### 1. Clone and Install
 
-\`\`\`bash
+```bash
 git clone <repo-url>
 cd prompt-engineering-game
 yarn install
-\`\`\`
+```
 
 ### 2. Configure Environment Variables
 
 Request the supabase keys from a repo collaborator
 
-\`\`\`bash
+```bash
 cp .env.example .env.local
-\`\`\`
+```
 
 Edit \`.env.local\`:
 
-\`\`\`env
+```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_anon_key_here
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
-\`\`\`
+```
 
 ### 3. Run Development Server
 
-\`\`\`bash
+```bash
 yarn dev
-\`\`\`
+```
 
 Open [http://localhost:3000](http://localhost:3000)
 
 ## Project Structure
 
-\`\`\`
+```
 src/
 ├── app/
 │   ├── daily-challenge/    # Protected game page
@@ -71,7 +71,7 @@ src/
 ├── actions/                # Server actions (auth, game)
 ├── constants/              # Constants
 └── types/                  # Type definitions
-\`\`\`
+```
 
 ## Learn More
 

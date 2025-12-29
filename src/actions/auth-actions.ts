@@ -16,7 +16,7 @@ export type AuthState = {
  */
 export async function signInWithPassword(
   prevState: AuthState, // <--- Added for useActionState compatibility
-  formData: FormData
+  formData: FormData,
 ): Promise<AuthState> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
@@ -45,12 +45,12 @@ export async function signInWithPassword(
  */
 export async function signUpWithPassword(
   prevState: AuthState,
-  formData: FormData
+  formData: FormData,
 ): Promise<AuthState> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  console.log('[signUpWithPassword] email', email);
-  console.log('[signUpWithPassword] password', password);
+  console.log("[signUpWithPassword] email", email);
+  console.log("[signUpWithPassword] password", password);
 
   if (!email || !password) {
     return { success: false, error: "Email and password are required" };
@@ -62,7 +62,7 @@ export async function signUpWithPassword(
     password,
   });
 
-  console.log('[signUpWithPassword] error', error);
+  console.log("[signUpWithPassword] error", error);
 
   if (error) {
     return { success: false, error: error.message };

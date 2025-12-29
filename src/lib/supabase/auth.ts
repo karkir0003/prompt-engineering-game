@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "./server";
-import { DEFAULT_AUTH_REDIRECT, DEFAULT_UNAUTH_REDIRECT } from "@/constants/routes";
+import {
+  DEFAULT_AUTH_REDIRECT,
+  DEFAULT_UNAUTH_REDIRECT,
+} from "@/constants/routes";
 import type { User } from "@supabase/supabase-js";
 
 /**
@@ -11,7 +14,9 @@ async function checkAuth(options: {
   redirectTo: string;
 }): Promise<User | null> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   // If we require auth but user is not logged in, redirect to login
   if (options.requireAuthenticated && !user) {
@@ -39,7 +44,9 @@ async function checkAuth(options: {
  *   return <div>Protected content</div>
  * }
  */
-export async function requireAuth(redirectTo = DEFAULT_UNAUTH_REDIRECT): Promise<User> {
+export async function requireAuth(
+  redirectTo = DEFAULT_UNAUTH_REDIRECT,
+): Promise<User> {
   const user = await checkAuth({ requireAuthenticated: true, redirectTo });
   return user!; // TypeScript: user is guaranteed to exist or redirect happens
 }
@@ -57,7 +64,9 @@ export async function requireAuth(redirectTo = DEFAULT_UNAUTH_REDIRECT): Promise
  *   return <div>Login form</div>
  * }
  */
-export async function requireGuest(redirectTo = DEFAULT_AUTH_REDIRECT): Promise<null> {
+export async function requireGuest(
+  redirectTo = DEFAULT_AUTH_REDIRECT,
+): Promise<null> {
   await checkAuth({ requireAuthenticated: false, redirectTo });
   return null; // TypeScript: user is guaranteed to not exist or redirect happens
 }

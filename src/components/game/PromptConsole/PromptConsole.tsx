@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { GAME_CONFIG } from "@/constants/game.constants";
+import { GAME_CONFIG } from "@/constants/game";
 import { submitGuess } from "@/actions/game-actions";
 import type { GameResult } from "@/types/game.types";
 import type { PromptConsoleProps } from "./PromptConsole.types";

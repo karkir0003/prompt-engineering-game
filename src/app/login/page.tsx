@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState } from "react";
-import { Button } from "@/components/ui/button";
 import { signInWithGoogle, signInWithPassword, signUpWithPassword } from "@/actions/auth-actions";
 import { Loader2, Lock } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";

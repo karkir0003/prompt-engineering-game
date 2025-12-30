@@ -14,7 +14,12 @@ export function GoogleSignInButton() {
 
     if (result?.error) {
       setIsLoading(false);
+      toast.error(result.error);
       return;
+    }
+
+    if (result && "url" in result) {
+      window.location.href = result.url;
     }
   };
 

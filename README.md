@@ -26,7 +26,7 @@ Promptle is a web-based game where users compete to recreate a "target image" us
 
 ```bash
 git clone <repo-url>
-cd prompt-engineering-game
+cd promptle
 yarn install
 ```
 
@@ -77,3 +77,4 @@ src/
 - [Next.js Docs](https://nextjs.org/docs)
 - [Supabase Docs](https://supabase.com/docs)
 - [Tailwind CSS](https://tailwindcss.com/docs)
+- [Vercel](https://vercel.com/docs)

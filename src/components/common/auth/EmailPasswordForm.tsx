@@ -30,10 +30,7 @@ export function EmailPasswordForm() {
         />
       </div>
       <div className="space-y-2">
-        <label
-          className="text-sm font-medium leading-none"
-          htmlFor="password"
-        >
+        <label className="text-sm font-medium leading-none" htmlFor="password">
           Password
         </label>
         <input

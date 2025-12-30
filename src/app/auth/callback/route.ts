@@ -16,20 +16,23 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    
+
     if (!error) {
       // Security Check: Ensure we only redirect to relative paths or our own domain
-      const forwardedHost = request.headers.get("x-forwarded-host"); 
+      const forwardedHost = request.headers.get("x-forwarded-host");
       const isLocalEnv = process.env.NODE_ENV === "development";
-      
-      const sanitizedNext = next.startsWith("/") && !next.startsWith("//") 
-        ? next 
-        : DEFAULT_AUTH_REDIRECT;
+
+      const sanitizedNext =
+        next.startsWith("/") && !next.startsWith("//")
+          ? next
+          : DEFAULT_AUTH_REDIRECT;
 
       if (isLocalEnv) {
         return NextResponse.redirect(`${origin}${sanitizedNext}`);
       } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${sanitizedNext}`);
+        return NextResponse.redirect(
+          `https://${forwardedHost}${sanitizedNext}`,
+        );
       } else {
         return NextResponse.redirect(`${origin}${sanitizedNext}`);
       }

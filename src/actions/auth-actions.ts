@@ -50,7 +50,7 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${origin}/auth/callback`, 
+      redirectTo: `${origin}/auth/callback`,
       queryParams: {
         access_type: "offline",
         prompt: "consent",
@@ -61,7 +61,7 @@ export async function signInWithGoogle() {
   if (error) {
     console.error(error);
     return { success: false, error: error.message };
-  } 
+  }
 
   if (data.url) {
     redirect(data.url); // This sends the user to Google

@@ -19,9 +19,8 @@ Promptle is a web-based game where users compete to recreate a "target image" us
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js Latest Stable Version. Use `nvm` ([docs](https://github.com/nvm-sh/nvm)) to manage node versions
 - Yarn
-- A Supabase account
 
 ### 1. Clone and Install
 

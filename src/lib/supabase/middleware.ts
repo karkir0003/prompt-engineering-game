@@ -46,6 +46,7 @@ export async function updateSession(request: NextRequest) {
   );
 
   // 3. Check the user's status by validating auth token against supabase DB
+  // Doc: https://supabase.com/docs/guides/getting-started/tutorials/with-nextjs?queryGroups=database-method&database-method=sql#nextjs-proxy
   const {
     data: { user },
   } = await supabase.auth.getUser();

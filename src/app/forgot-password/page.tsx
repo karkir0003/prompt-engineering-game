@@ -19,8 +19,8 @@ export default function ForgotPassword() {
         ) : (
           <form action={formAction} className="flex flex-col gap-4">
             <p className="text-sm text-gray-600 text-center">
-              Enter your email address and we&apos;ll send you a link to reset your
-              password.
+              Enter your email address and we&apos;ll send you a link to reset
+              your password.
             </p>
             <input
               name="email"

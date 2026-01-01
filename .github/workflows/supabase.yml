@@ -34,11 +34,7 @@ jobs:
           # 1. Generate Raw Types
           supabase gen types typescript --local > src/types/supabase.ts
           
-          # 2. Format with Prettier (The Magic Fix)
-          # We use npx to run the exact version of Prettier defined in your package.json
-          npx prettier --write src/types/supabase.ts
-          
-          # 3. Check for Differences
+          # 2. Check for Differences
           if ! git diff --ignore-space-at-eol --exit-code src/types/supabase.ts; then
             echo "Error: Database types are out of sync."
             echo "1. Run 'supabase db reset' locally."

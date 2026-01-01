@@ -51,18 +51,7 @@ For the current iteration, we use Supabase to manage the database in an infrastr
 
 You can install the supabase CLI by running `brew install supabase/tap/supabase` as seen [here](https://supabase.com/docs/guides/local-development/cli/getting-started?queryGroups=platform&platform=macos#installing-the-supabase-cli)
 
-Two cases
-#### Case A: Linking to Remote
-
-Use this setup if you are working on frontend but need to link to the dev database. Run from the root directory `~/promptle`
-
-```bash
-supabase login
-supabase link --project-ref <your-project-id>
-```
-You should be able to access the project reference id through Settings > General > Project ID
-
-#### Case B: Pure Local Development
+#### Pure Local Development
 
 Run the entire Supabase stack locally via a docker container. You can [setup supabase with Docker Desktop](https://docs.docker.com/desktop) or use a tool like [`colima`](https://github.com/abiosoft/colima)
 

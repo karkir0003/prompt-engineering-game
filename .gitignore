@@ -13,6 +13,11 @@ CLAUDE.MD
 !.yarn/releases
 !.yarn/versions
 
+# Supabase
+supabase/.branches
+supabase/.temp
+supabase/functions/.env
+
 # testing
 /coverage
 

@@ -38,7 +38,7 @@ Request the supabase keys from a repo collaborator
 cp .env.example .env.local
 ```
 
-Edit \`.env.local\`:
+Edit `.env.local`:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
@@ -46,7 +46,25 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_anon_key_here
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
 ```
 
-### 3. Run Development Server
+### 3. Database Setup
+For the current iteration, we use Supabase to manage the database in an infrastructure as code format. **DO NOT create tables manually in the dashboard**. 
+
+You can install the supabase CLI by running `brew install supabase/tap/supabase` as seen [here](https://supabase.com/docs/guides/local-development/cli/getting-started?queryGroups=platform&platform=macos#installing-the-supabase-cli)
+
+#### Pure Local Development
+
+Run the entire Supabase stack locally via a docker container. You can [setup supabase with Docker Desktop](https://docs.docker.com/desktop) or use a tool like [`colima`](https://github.com/abiosoft/colima)
+
+```bash
+supabase start
+```
+
+NOTE: This command will take a bit of time on the first run due to downloading the needed assets. 
+
+You can refer to this [section](https://supabase.com/docs/guides/local-development/cli/getting-started?queryGroups=platform&platform=macos#access-your-projects-services) on how to access the project's services
+
+
+### 4. Run Development Server
 
 ```bash
 yarn dev

@@ -1,0 +1,30 @@
+name: Supabase CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'supabase/**'
+      - 'src/types/supabase.ts'
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.67.1
+      
+      - name: Start Supabase DB
+        run: supabase db start
+
+      - name: Lint Database
+        run: supabase db lint

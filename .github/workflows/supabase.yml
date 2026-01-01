@@ -3,9 +3,9 @@ name: Supabase CI
 on:
   pull_request:
     branches: [ "main" ]
-      paths:
-        - 'supabase/**'
-        - 'src/types/supabase.ts'
+    paths:
+      - 'supabase/**'
+      - 'src/types/supabase.ts'
   push:
     branches: [main]
 

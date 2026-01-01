@@ -31,18 +31,20 @@ jobs:
         run: |
           mkdir -p src/types
           
-          # 1. Generate Raw Types
+          # A. Generate
           supabase gen types typescript --local > src/types/supabase.ts
 
-          # 2. Format with Prettier
-          npx prettier --write src/types/supabase.ts
+          # B. Format (using local project Prettier)
+          yarn prettier --write src/types/supabase.ts
           
-          # 3. Check for Differences
+          # C. Compare
           if ! git diff --ignore-space-at-eol --exit-code src/types/supabase.ts; then
-            echo "Error: Database types are out of sync."
-            echo "1. Run 'supabase db reset' locally."
-            echo "2. Run 'yarn gen-types' (make sure Prettier runs!)."
-            echo "3. Commit the changes."
+            echo "❌ CI Verification Failed!"
+            echo "The types generated in CI differ from what you committed."
+            echo "--------------------------------------------------"
+            echo "DEBUG: Here is the difference:"
+            git diff src/types/supabase.ts
+            echo "--------------------------------------------------"
             exit 1
           fi
       # - name: Verify Generated Types

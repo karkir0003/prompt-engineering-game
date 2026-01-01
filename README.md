@@ -53,11 +53,23 @@ You can install the supabase CLI by running `brew install supabase/tap/supabase`
 
 #### Pure Local Development
 
-Run the entire Supabase stack locally via a docker container. You can [setup supabase with Docker Desktop](https://docs.docker.com/desktop) or use a tool like [`colima`](https://github.com/abiosoft/colima)
+Run the entire Supabase stack locally via a docker container. You can [setup supabase with Docker Desktop](https://docs.docker.com/desktop) or use a tool like [`colima`](https://github.com/abiosoft/colima). I recommend `colima` for Mac users!
 
+If you choose to use `colima`, follow the below instructions:
+1. Setup `colima` as per the [README.md](https://github.com/abiosoft/colima)
+2. Run `colima start` to run the container runtime in the background. If you have issues here, make sure you resolve before proceeding
+3. Confirm with `colima status` that you see a message like `colima is running using macOS Virtualization.Framework`
+4. Run `supabase start`. NOTE: This command will take a bit of time on the first run due to downloading the needed assets. 
+5. Run `supabase stop` to stop the containers
+
+##### General Troubleshooting
+* Check that `colima` is running via `colima status`
+* Point Supabase to the correct socket via the following ([source](https://github.com/supabase/cli/issues/153#issuecomment-3644335387))
 ```bash
-supabase start
+sudo ln -sf "$HOME/.colima/default/docker.sock" /var/run/docker.sock
+export DOCKER_HOST="unix:///var/run/docker.sock"
 ```
+* Make sure your supabase CLI is updated via `brew upgrade supabase`
 
 NOTE: This command will take a bit of time on the first run due to downloading the needed assets. 
 

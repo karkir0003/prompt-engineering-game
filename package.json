@@ -11,6 +11,7 @@
     "supabase:gen-types": "supabase gen types typescript --local > src/types/supabase.ts"
   },
   "dependencies": {
+    "@huggingface/inference": "^4.13.5",
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@supabase/ssr": "^0.8.0",

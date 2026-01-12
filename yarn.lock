@@ -366,6 +366,24 @@
     "@eslint/core" "^0.17.0"
     levn "^0.4.1"
 
+"@huggingface/inference@^4.13.5":
+  version "4.13.5"
+  resolved "https://registry.yarnpkg.com/@huggingface/inference/-/inference-4.13.5.tgz#e9d40287e2a70eb0c3c4e1163d4cc922477834bb"
+  integrity sha512-jeRQVwoV2Xx5stHR4wyZPPvhOOm6Hi9B2hsHWWuFJBEoxlFJMbRAsQbTvQrusw2vNBfNHIqb2i9EpelNLOqhvg==
+  dependencies:
+    "@huggingface/jinja" "^0.5.3"
+    "@huggingface/tasks" "^0.19.67"
+
+"@huggingface/jinja@^0.5.3":
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/@huggingface/jinja/-/jinja-0.5.3.tgz#8182a2d6fc9f84c1539fa12c219a5915cdc41264"
+  integrity sha512-asqfZ4GQS0hD876Uw4qiUb7Tr/V5Q+JZuo2L+BtdrD4U40QU58nIRq3ZSgAzJgT874VLjhGVacaYfrdpXtEvtA==
+
+"@huggingface/tasks@^0.19.67":
+  version "0.19.75"
+  resolved "https://registry.yarnpkg.com/@huggingface/tasks/-/tasks-0.19.75.tgz#128aaeb93190e4389593473a38d3c3f3fb6bc413"
+  integrity sha512-yTz6Hs3KcalPhlzMAUtjEGO0W21e5s661LGm2U0vEJRn/sanLTgP2QWL0lL/IvrAh+Ybiz7iNIcYtJcVOuCndg==
+
 "@humanfs/core@^0.19.1":
   version "0.19.1"
   resolved "https://registry.yarnpkg.com/@humanfs/core/-/core-0.19.1.tgz#17c55ca7d426733fe3c561906b8173c336b40a77"

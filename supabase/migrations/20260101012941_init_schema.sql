@@ -9,9 +9,6 @@ CREATE TABLE IF NOT EXISTS challenges (
   photographer_profile_url text NOT NULL,
   photo_description text,
   
-  -- CLIP embedding
-  embedding jsonb,
-  
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

@@ -57,10 +57,11 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Get the date
+    // Get today's date in UTC
     const today = new Date()
-    const pstDate = new Date(today.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }))
-    const dateString = pstDate.toISOString().split('T')[0] // 'YYYY-MM-DD'
+    const dateString = today.toISOString().split('T')[0] // Format: YYYY-MM-DD
+
+    console.log('Checking for challenge on date (UTC):', dateString)
 
     // Check if challenge already exists for today
     const { data: existingChallenge } = await supabase
@@ -146,12 +147,12 @@ Deno.serve(async (req) => {
     const { data, error } = await supabase
       .from('challenges')
       .insert({
-        date: dateString,
+        date: dateString, 
         image_url: photo.urls.regular,
         unsplash_id: photo.id,
         photographer_name: photo.user.name,
         photographer_profile_url: photo.user.links.html,
-        embedding: embeddingArray // Store as JSONB array
+        embedding: embeddingArray
       })
       .select()
       .single()

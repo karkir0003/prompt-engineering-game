@@ -9,12 +9,11 @@ import { getUserAttempts } from "@/actions/game-actions";
 async function getTodaysChallenge() {
   const supabase = await createClient();
   
-  // Get today's date in PST
+  // Get today's date in UTC
   const today = new Date();
-  const pstDate = new Date(today.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-  const dateString = pstDate.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+  const dateString = today.toISOString().split('T')[0]; // 'YYYY-MM-DD' 
 
-  console.log('Getting today\'s challenge for date:', dateString);
+  console.log('Getting today\'s challenge for date (UTC):', dateString);
 
   // Fetch today's challenge
   const { data: challenge, error } = await supabase

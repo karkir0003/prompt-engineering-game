@@ -5,7 +5,6 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from 'npm:@supabase/supabase-js@2'
-import { HfInference } from "@huggingface/inference"
 
 // Types for Unsplash Response
 interface UnsplashPhoto {
@@ -42,7 +41,7 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const unsplashKey = Deno.env.get('UNSPLASH_ACCESS_KEY') ?? ''
-    const hfToken = Deno.env.get('HUGGING_FACE_ACCESS_TOKEN') ?? ''
+    const clipServiceUrl = Deno.env.get('HUGGINGFACE_SPACE_URL') ?? ''
     
     // Validate environment variables
     if (!supabaseUrl || !supabaseServiceKey) {
@@ -51,8 +50,8 @@ Deno.serve(async (req) => {
     if (!unsplashKey) {
       throw new Error('Missing UNSPLASH_ACCESS_KEY')
     }
-    if (!hfToken) {
-      throw new Error('Missing HUGGING_FACE_ACCESS_TOKEN')
+    if (!clipServiceUrl) {
+      throw new Error('Missing HUGGINGFACE_SPACE_URL')
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
@@ -88,7 +87,7 @@ Deno.serve(async (req) => {
     // Fetch Random Photo from Unsplash
     console.log('Fetching random photo from Unsplash...')
     const unsplashResponse = await fetch(
-      `https://api.unsplash.com/photos/random?orientation=landscape&query=nature,architecture,travel,landscape,cityscape`,
+      `https://api.unsplash.com/photos/random`,
       {
         headers: {
           Authorization: `Client-ID ${unsplashKey}`,
@@ -104,44 +103,48 @@ Deno.serve(async (req) => {
     const photo: UnsplashPhoto = await unsplashResponse.json()
     console.log('Photo fetched:', photo.id)
 
+    // Trigger download tracking
     await fetch(photo.links.download_location, {
       headers: {
         Authorization: `Client-ID ${unsplashKey}`,
       },
     })
 
-    console.log('Downloading image for embedding generation...')
-    const photoResponse = await fetch(photo.urls.regular)
-    if (!photoResponse.ok) {
-      throw new Error('Failed to fetch photo content from Unsplash')
-    }
-    const photoBlob = await photoResponse.blob()
-
-    // Generate CLIP embedding for the image
-    console.log('Generating CLIP embedding for image...')
-    const hf = new HfInference(hfToken)
+    // Generate CLIP embedding using your Hugging Face Space
+    console.log('Generating CLIP embedding using clip-embedding-service...')
     
     let embeddingArray: number[] | null = null
     
     try {
-      const result = await hf.zeroShotImageClassification({
-        model: "openai/clip-vit-base-patch32",
-        inputs: {
-          image: photoBlob,
+      const embeddingResponse = await fetch(clipServiceUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        parameters: {
-          candidate_labels: ["an image", "a photo"],
-        },
+        body: JSON.stringify({
+          image_url: photo.urls.regular,
+        }),
       })
+
+      if (!embeddingResponse.ok) {
+        const errorText = await embeddingResponse.text()
+        console.error('CLIP service error:', errorText)
+        throw new Error(`CLIP service error: ${embeddingResponse.status}`)
+      }
+
+      const embeddingResult = await embeddingResponse.json()
       
-      console.log('Zero-shot classification successful')
-      embeddingArray = null
+      if (embeddingResult.embedding && Array.isArray(embeddingResult.embedding)) {
+        embeddingArray = embeddingResult.embedding
+        console.log(`Embedding generated successfully: ${embeddingArray.length} dimensions`)
+      } else {
+        console.warn('Unexpected embedding response format:', embeddingResult)
+        embeddingArray = null
+      }
     } catch (error) {
       console.log('Could not pre-generate embedding, will compute on-demand:', error)
       embeddingArray = null
     }
-
-    console.log('Embedding status:', embeddingArray ? `Array of ${embeddingArray.length} dimensions` : 'Will generate on-demand')
 
     // Insert into Database
     const { data, error } = await supabase
@@ -198,15 +201,3 @@ Deno.serve(async (req) => {
     )
   }
 })
-
-/* To invoke locally:
-
-  1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
-  2. Make an HTTP request:
-
-  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/generate-daily-challenge' \
-    --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0' \
-    --header 'Content-Type: application/json'
-
-  3. To test in production, set up a cron job or call it manually once per day
-*/

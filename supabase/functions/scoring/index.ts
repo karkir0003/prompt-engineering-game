@@ -144,12 +144,10 @@ Deno.serve(async (req) => {
       throw new Error("Invalid text embedding");
     }
 
-    // Cosine similarity
-    const similarity = cosineSimilarity(imageEmbedding, textEmbedding);
+    // Cosine similarity calculation TODO: Update this to be cosine similarity between user generated image embedding and the target image embedding with image generation implementation
+    const score = similarityScore(imageEmbedding, textEmbedding);
 
-    const score = Math.round(((similarity + 1) / 2) * 100);
-
-    console.log("Raw similarity:", similarity, "Score:", score);
+    console.log("Score:", score);
 
     return new Response(
       JSON.stringify({
@@ -183,16 +181,16 @@ Deno.serve(async (req) => {
   }
 });
 
-function cosineSimilarity(a: number[], b: number[]): number {
+function similarityScore(a: number[], b: number[]): number {
   if (a.length !== b.length) {
     throw new Error(`Vector length mismatch: ${a.length} vs ${b.length}`);
   }
-
+  //Calculate Cosine Similarity
   const dotProduct = a.reduce((sum, val, i) => sum + val * b[i], 0);
   const magnitudeA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
   const magnitudeB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
 
   if (magnitudeA === 0 || magnitudeB === 0) return 0;
 
-  return dotProduct / (magnitudeA * magnitudeB);
+  return Math.round((dotProduct / (magnitudeA * magnitudeB) + 1) / 2);
 }

@@ -9,34 +9,47 @@ import { ResultView } from "./ResultView";
 import { InputView } from "./InputView";
 
 export function PromptConsole({
+  challengeId,
   maxAttempts = GAME_CONFIG.DEFAULT_MAX_ATTEMPTS,
   maxPromptLength = GAME_CONFIG.DEFAULT_MAX_PROMPT_LENGTH,
+  initialAttemptsCount = 0,
   onSubmit: onResultSubmit,
   onReset: onExternalReset,
-}: PromptConsoleProps = {}) {
+}: PromptConsoleProps) {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GameResult | null>(null);
-  const [attemptsRemaining, setAttemptsRemaining] = useState(maxAttempts);
+  const [attemptsRemaining, setAttemptsRemaining] = useState(
+    maxAttempts - initialAttemptsCount
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!prompt || loading) return;
+    if (!prompt || loading || !challengeId) return;
 
     setLoading(true);
     const formData = new FormData();
     formData.append("prompt", prompt);
 
     try {
-      const data = await submitGuess(formData);
+      const data = await submitGuess(challengeId, formData);
       setResult(data);
-      setAttemptsRemaining((prev: number) => Math.max(0, prev - 1));
+      
+      if (data.attemptsLeft !== undefined) {
+        setAttemptsRemaining(data.attemptsLeft);
+      }
 
       if (onResultSubmit) {
         onResultSubmit(data);
       }
     } catch (error) {
       console.error("Failed to submit guess:", error);
+      setResult({
+        success: false,
+        imageUrl: null,
+        score: 0,
+        message: "Something went wrong. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -45,17 +58,24 @@ export function PromptConsole({
   const handleReset = () => {
     setResult(null);
     setPrompt("");
-    setAttemptsRemaining(maxAttempts);
 
     if (onExternalReset) {
       onExternalReset();
     }
   };
 
+  // Show result view after submission
   if (result) {
-    return <ResultView result={result} onReset={handleReset} />;
+    return (
+      <ResultView 
+        result={result} 
+        onReset={handleReset}
+        attemptsRemaining={attemptsRemaining}
+      />
+    );
   }
 
+  // Show input view
   return (
     <InputView
       prompt={prompt}

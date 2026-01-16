@@ -1,6 +1,6 @@
 export interface GameResult {
   success: boolean;
-  imageUrl: string;
+  imageUrl: string | null;
   score: number;
   message: string;
 }

@@ -3,7 +3,7 @@ export interface GameResult {
   imageUrl: string | null;
   score: number;
   message: string;
-  attemptsLeft?: number; 
+  attemptsLeft?: number;
 }
 
 export interface Challenge {

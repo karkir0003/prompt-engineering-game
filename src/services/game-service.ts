@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import type { Challenge, Guess } from "@/types/game.types";
 
 // Validates that a prompt is within acceptable length constraints
 export function validatePrompt(prompt: string): {
@@ -55,7 +56,7 @@ export async function getUserAttemptCount(
 
 export async function getChallengeById(
   challengeId: string,
-): Promise<{ challenge: any; error?: string }> {
+): Promise<{ challenge: Challenge | null; error?: string }> {
   const supabase = await createClient();
 
   const { data: challenge, error } = await supabase
@@ -82,7 +83,7 @@ export async function saveGuess(guessData: {
   imageUrl: string;
   score: number;
   attemptNumber: number;
-}): Promise<{ guess: any; error?: string }> {
+}): Promise<{ guess: Guess | null; error?: string }> {
   const supabase = await createClient();
 
   const { data: guess, error } = await supabase

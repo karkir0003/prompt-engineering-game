@@ -105,7 +105,7 @@ export async function submitGuess(
       challengeId,
     );
     score = result.score;
-  } catch (error) {
+  } catch {
     return {
       success: false,
       imageUrl: null,

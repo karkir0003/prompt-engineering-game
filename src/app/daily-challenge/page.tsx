@@ -23,7 +23,8 @@ export default async function DailyChallengePage() {
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-2">No Challenge Available</h2>
             <p className="text-muted-foreground">
-              We couldn&apos;t load today&apos;s challenge. Please try again later.
+              We couldn&apos;t load today&apos;s challenge. Please try again
+              later.
             </p>
           </div>
         </div>

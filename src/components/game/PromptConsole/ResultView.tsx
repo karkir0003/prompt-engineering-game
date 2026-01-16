@@ -5,7 +5,11 @@ import { Card } from "@/components/ui/card";
 import type { ResultViewProps } from "./PromptConsole.types";
 import { ImageDisplay } from "@/components/common/image/ImageDisplay";
 
-export function ResultView({ result, onReset, attemptsRemaining }: ResultViewProps) {
+export function ResultView({
+  result,
+  onReset,
+  attemptsRemaining,
+}: ResultViewProps) {
   return (
     <div className="flex flex-col h-full justify-center max-w-xl mx-auto w-full space-y-6 animate-in fade-in zoom-in duration-500">
       <div className="text-center space-y-2">
@@ -26,7 +30,7 @@ export function ResultView({ result, onReset, attemptsRemaining }: ResultViewPro
               Similarity Score
             </div>
             <div className="text-2xl font-bold text-green-600">
-              {(result.score).toFixed(0)}%
+              {result.score.toFixed(0)}%
             </div>
           </div>
         </Card>
@@ -43,7 +47,8 @@ export function ResultView({ result, onReset, attemptsRemaining }: ResultViewPro
 
       {/* Show attempts remaining */}
       <p className="text-center text-sm text-muted-foreground">
-        Attempts remaining: <span className="font-bold">{attemptsRemaining}</span>
+        Attempts remaining:{" "}
+        <span className="font-bold">{attemptsRemaining}</span>
       </p>
 
       {/* Only show Try Again if user has attempts left */}

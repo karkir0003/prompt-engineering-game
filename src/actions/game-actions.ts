@@ -25,7 +25,7 @@ function formatAttemptMessage(attemptsLeft: number): string {
 
 export async function submitGuess(
   challengeId: string,
-  formData: FormData
+  formData: FormData,
 ): Promise<GameResult> {
   const supabase = await createClient();
 
@@ -81,10 +81,9 @@ export async function submitGuess(
   }
 
   // Get the target challenge image to compare against
-  const { challenge, error: challengeError } = await getChallengeById(
-    challengeId
-  );
-  
+  const { challenge, error: challengeError } =
+    await getChallengeById(challengeId);
+
   if (challengeError || !challenge) {
     return {
       success: false,
@@ -103,7 +102,7 @@ export async function submitGuess(
     const result = await calculateSimilarityScore(
       challenge.image_url,
       prompt,
-      challengeId
+      challengeId,
     );
     score = result.score;
   } catch (error) {
@@ -167,7 +166,7 @@ export async function getBestScore(challengeId: string) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  
+
   if (!user) return null;
 
   return getUserBestScore(user.id, challengeId);

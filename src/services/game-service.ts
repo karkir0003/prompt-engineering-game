@@ -1,17 +1,22 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
 
-
 // Validates that a prompt is within acceptable length constraints
-export function validatePrompt(prompt: string): { valid: boolean; error?: string } {
+export function validatePrompt(prompt: string): {
+  valid: boolean;
+  error?: string;
+} {
   if (!prompt || prompt.length === 0) {
     return { valid: false, error: "Prompt cannot be empty" };
   }
-  
+
   if (prompt.length > 100) {
-    return { valid: false, error: "Prompt must be between 1 and 100 characters" };
+    return {
+      valid: false,
+      error: "Prompt must be between 1 and 100 characters",
+    };
   }
-  
+
   return { valid: true };
 }
 
@@ -21,10 +26,10 @@ export function validatePrompt(prompt: string): { valid: boolean; error?: string
  */
 export async function getUserAttemptCount(
   userId: string,
-  challengeId: string
+  challengeId: string,
 ): Promise<{ count: number; nextAttemptNumber: number; error?: string }> {
   const supabase = await createClient();
-  
+
   const { count, error } = await supabase
     .from("guesses")
     .select("*", { count: "exact", head: true })
@@ -49,10 +54,10 @@ export async function getUserAttemptCount(
 }
 
 export async function getChallengeById(
-  challengeId: string
+  challengeId: string,
 ): Promise<{ challenge: any; error?: string }> {
   const supabase = await createClient();
-  
+
   const { data: challenge, error } = await supabase
     .from("challenges")
     .select("image_url")
@@ -79,7 +84,7 @@ export async function saveGuess(guessData: {
   attemptNumber: number;
 }): Promise<{ guess: any; error?: string }> {
   const supabase = await createClient();
-  
+
   const { data: guess, error } = await supabase
     .from("guesses")
     .insert({
@@ -106,7 +111,7 @@ export async function saveGuess(guessData: {
 
 export async function getUserAttemptsForChallenge(
   userId: string,
-  challengeId: string
+  challengeId: string,
 ) {
   const supabase = await createClient();
 
@@ -125,10 +130,9 @@ export async function getUserAttemptsForChallenge(
   return guesses;
 }
 
-
 export async function getUserBestScore(
   userId: string,
-  challengeId: string
+  challengeId: string,
 ): Promise<number | null> {
   const supabase = await createClient();
 

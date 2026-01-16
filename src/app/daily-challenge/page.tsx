@@ -52,8 +52,8 @@ export default async function DailyChallengePage() {
 
         {/* Right Panel: Prompt console with attempt history */}
         <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col space-y-8 overflow-y-auto">
-          <PromptConsole 
-            challengeId={challenge.id} 
+          <PromptConsole
+            challengeId={challenge.id}
             maxAttempts={3}
             initialAttemptsCount={attempts.length}
           />

@@ -7,7 +7,7 @@ import "server-only";
 export async function calculateSimilarityScore(
   challengeImageUrl: string,
   userPrompt: string,
-  challengeId: string
+  challengeId: string,
 ): Promise<{ score: number }> {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -33,12 +33,12 @@ export async function calculateSimilarityScore(
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(
-        `Scoring function error: ${response.status}\n Message: ${errorText}`
+        `Scoring function error: ${response.status}\n Message: ${errorText}`,
       );
     }
 
     const result = await response.json();
-    
+
     if (result.success) {
       return { score: result.score };
     } else {

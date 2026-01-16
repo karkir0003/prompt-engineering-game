@@ -20,7 +20,7 @@ export function PromptConsole({
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GameResult | null>(null);
   const [attemptsRemaining, setAttemptsRemaining] = useState(
-    maxAttempts - initialAttemptsCount
+    maxAttempts - initialAttemptsCount,
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,7 +34,7 @@ export function PromptConsole({
     try {
       const data = await submitGuess(challengeId, formData);
       setResult(data);
-      
+
       if (data.attemptsLeft !== undefined) {
         setAttemptsRemaining(data.attemptsLeft);
       }
@@ -67,8 +67,8 @@ export function PromptConsole({
   // Show result view after submission
   if (result) {
     return (
-      <ResultView 
-        result={result} 
+      <ResultView
+        result={result}
         onReset={handleReset}
         attemptsRemaining={attemptsRemaining}
       />

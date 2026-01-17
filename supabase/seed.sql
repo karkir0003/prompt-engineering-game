@@ -248,9 +248,9 @@ INSERT INTO public.challenges (
 INSERT INTO public.guesses (
     id, user_id, challenge_id, prompt, image_url, score, attempt_number
 ) VALUES
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000001'::uuid, 'c0000000-0000-0000-0000-000000000001'::uuid, 'Neon lights raining', 'https://placehold.co/600x400/png?text=Yesterday+Guess', 0.85, 1),
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000001'::uuid, 'c0000000-0000-0000-0000-000000000002'::uuid, 'Books on a shelf', 'https://placehold.co/600x400/png?text=Today+Attempt+1', 0.45, 1),
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000001'::uuid, 'c0000000-0000-0000-0000-000000000002'::uuid, 'Winter evening with street lamps', 'https://placehold.co/600x400/png?text=Today+Attempt+2', 0.67, 2),
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000001'::uuid, 'c0000000-0000-0000-0000-000000000002'::uuid, 'Snowy park at night with lampposts', 'https://placehold.co/600x400/png?text=Today+Attempt+3', 0.92, 3),
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000003'::uuid, 'c0000000-0000-0000-0000-000000000001'::uuid, 'City lights at night', 'https://placehold.co/600x400/png?text=Competitor+Yesterday', 0.76, 1),
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000003'::uuid, 'c0000000-0000-0000-0000-000000000002'::uuid, 'Night scene with snow', 'https://placehold.co/600x400/png?text=Competitor+Today', 0.96, 1);
+    (gen_random_uuid(), '00000000-0000-0000-0000-000000000001'::uuid, 'c0000000-0000-0000-0000-000000000001'::uuid, 'Neon lights raining', 'https://placehold.co/600x400/png?text=Yesterday+Guess', 85, 1),
+    (gen_random_uuid(), '00000000-0000-0000-0000-000000000001'::uuid, 'c0000000-0000-0000-0000-000000000002'::uuid, 'Books on a shelf', 'https://placehold.co/600x400/png?text=Today+Attempt+1', 45, 1),
+    (gen_random_uuid(), '00000000-0000-0000-0000-000000000001'::uuid, 'c0000000-0000-0000-0000-000000000002'::uuid, 'Winter evening with street lamps', 'https://placehold.co/600x400/png?text=Today+Attempt+2', 67, 2),
+    (gen_random_uuid(), '00000000-0000-0000-0000-000000000001'::uuid, 'c0000000-0000-0000-0000-000000000002'::uuid, 'Snowy park at night with lampposts', 'https://placehold.co/600x400/png?text=Today+Attempt+3', 92, 3),
+    (gen_random_uuid(), '00000000-0000-0000-0000-000000000003'::uuid, 'c0000000-0000-0000-0000-000000000001'::uuid, 'City lights at night', 'https://placehold.co/600x400/png?text=Competitor+Yesterday', 76, 1),
+    (gen_random_uuid(), '00000000-0000-0000-0000-000000000003'::uuid, 'c0000000-0000-0000-0000-000000000002'::uuid, 'Night scene with snow', 'https://placehold.co/600x400/png?text=Competitor+Today', 96, 1);

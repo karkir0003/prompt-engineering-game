@@ -20,19 +20,17 @@ export function ResultView({
 
       {/* Only show card with image if generation was successful */}
       {result.success && result.imageUrl && (
-        <>
-          <Card className="p-4 border-2 border-primary/20 overflow-hidden space-y-4">
-            <ImageDisplay src={result.imageUrl} alt="AI Generation" />
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-medium text-muted-foreground">
-                Similarity Score
-              </div>
-              <div className="text-2xl font-bold text-green-600">
-                {result.score.toFixed(0)}%
-              </div>
+        <Card className="p-4 border-2 border-primary/20 overflow-hidden space-y-4">
+          <ImageDisplay src={result.imageUrl} alt="AI Generation" />
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-medium text-muted-foreground">
+              Similarity Score
             </div>
-          </Card>
-        </>
+            <div className="text-2xl font-bold text-green-600">
+              {result.score.toFixed(0)}%
+            </div>
+          </div>
+        </Card>
       )}
 
       {/* Show error message prominently if failed */}

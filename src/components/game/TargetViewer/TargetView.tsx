@@ -6,6 +6,7 @@ import { ImageDisplay } from "@/components/common/image/ImageDisplay";
 interface TargetViewerProps {
   imageUrl: string;
   photographer: string;
+  photographerUrl: string;
 }
 
 export function TargetViewer({ imageUrl, photographer }: TargetViewerProps) {

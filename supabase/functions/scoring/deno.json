@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "@huggingface/inference": "https://esm.sh/@huggingface/inference@4.13.5",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2.39.0",
+    "@supabase/functions-js/edge-runtime.d.ts": "jsr:@supabase/functions-js/edge-runtime.d.ts"
+  }
+}

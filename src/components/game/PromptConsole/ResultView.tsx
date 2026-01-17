@@ -16,9 +16,6 @@ export function ResultView({
         <h2 className="text-2xl font-bold">
           {result.success ? "Generation Complete!" : "Oops!"}
         </h2>
-        <p className="text-muted-foreground">
-          {result.success ? "Here is the AI result:" : result.message}
-        </p>
       </div>
 
       {/* Only show card with image if generation was successful */}

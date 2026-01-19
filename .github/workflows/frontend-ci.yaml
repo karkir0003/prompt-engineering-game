@@ -39,6 +39,7 @@ jobs:
         run: yarn install --frozen-lockfile
       
       - name: Prettify code
+        id: prettier
         uses: creyD/prettier_action@v4.6
         with:
           github_token: ${{ steps.app-token.outputs.token }}
@@ -46,8 +47,7 @@ jobs:
           file_pattern: "src"
           prettier_options: --write **/*.{js,jsx,ts,tsx,json,yaml,yml,md,css,scss}
         
-      - name: Reinstall Dependencies (if needed)
-        if: steps.prettier.outputs.modified == 'true'
+      - name: Reinstall Dependencies
         run: yarn install --frozen-lockfile
       
       - name: Run Linter

@@ -7,17 +7,26 @@ on:
 jobs:
   check-description:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
     steps:
-      - name: Check PR Body
-        uses: actions/github-script@v8
+      - name: Check PR Body & Post Feedback
+        uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const body = context.payload.pull_request.body || "";
+            const { owner, repo, number } = context.issue;
             
+            // Defines a unique signature so the bot knows which comment is its own
+            const botSignature = "";
+            
+            let errors = [];
+
             // --- CHECK 1: Global Placeholder Check ---
             if (body.includes("<TODO:")) {
-              core.setFailed("❌ You forgot to fill out the PR Template! Please remove all '<TODO:...>' placeholders.");
-              return; // Stop early
+              errors.push("❌ You forgot to fill out the PR Template! Please remove all '<TODO:...>' placeholders.");
             }
 
             // --- CHECK 2: Required Sections Existence ---
@@ -29,44 +38,74 @@ jobs:
             ];
 
             const missingHeaders = requiredHeaders.filter(header => !body.includes(header));
+            
             if (missingHeaders.length > 0) {
-              core.setFailed(`❌ Missing required sections:\n${missingHeaders.map(h => `- ${h}`).join('\n')}`);
-              return;
-            }
-
-            // --- CHECK 3: Issue Link Validation ---
-            // Extract text after "Issue Link:" until the next newline
-            const issueLinkLine = body.split("Issue Link:")[1].split("\n")[0].trim();
-            
-            // Regex checks for a URL (http/s) OR a GitHub issue reference (#123)
-            // It rejects if the line is empty or just whitespace
-            const hasValidLink = /https?:\/\/.+|#\d+/.test(issueLinkLine);
-            
-            if (!hasValidLink) {
-               core.setFailed("❌ The 'Issue Link:' section appears empty or invalid. Please provide a URL or Issue #.");
-               return;
-            }
-
-            // --- CHECK 4: Section Content Validation ---
-            // Ensure specific sections aren't just headers with no text below them
-            
-            function checkSectionLength(header, minLength) {
-              // Get text between this header and the next header (##) or end of string
-              const content = body.split(header)[1].split("##")[0].trim();
-              if (content.length < minLength) {
-                 return true; // It IS too short
+              errors.push(`❌ Missing required sections:\n${missingHeaders.map(h => `  - ${h}`).join('\n')}`);
+            } else {
+              // Only check content if headers exist (to prevent script crash)
+              
+              // --- CHECK 3: Issue Link Validation ---
+              try {
+                const issueLinkLine = body.split("Issue Link:")[1].split("\n")[0].trim();
+                const hasValidLink = /https?:\/\/.+|#\d+/.test(issueLinkLine);
+                if (!hasValidLink) {
+                   errors.push("❌ The 'Issue Link:' section appears empty or invalid. Please provide a URL or Issue #.");
+                }
+              } catch (e) {
+                errors.push("❌ Could not parse 'Issue Link:'. Make sure it's on the same line as the header.");
               }
-              return false;
+
+              // --- CHECK 4: Section Content Validation ---
+              function checkSectionLength(header, minLength, errorMsg) {
+                const content = body.split(header)[1].split("##")[0].trim();
+                if (content.length < minLength) {
+                   errors.push(errorMsg);
+                }
+              }
+
+              checkSectionLength("## Context", 10, "❌ Your 'Context' section is too short. Please explain the 'Why'.");
+              checkSectionLength("## Changes Made", 5, "❌ Your 'Changes Made' section is too short. Please list what you changed.");
+              checkSectionLength("## Testing Plan", 10, "❌ Your 'Testing Plan' is empty. Please provide screenshots, videos, or reproduction steps.");
             }
 
-            if (checkSectionLength("## Context", 10)) {
-               core.setFailed("❌ Your 'Context' section is too short. Please explain the 'Why'.");
-            }
+            // --- HANDLE COMMENTS (The "Polite" Logic) ---
+            
+            // 1. Find previous bot comment
+            const comments = await github.rest.issues.listComments({
+              owner, repo, issue_number: number,
+            });
+            const previousComment = comments.data.find(c => c.body.includes(botSignature));
 
-            if (checkSectionLength("## Changes Made", 5)) {
-               core.setFailed("❌ Your 'Changes Made' section is too short. Please list what you changed.");
-            }
+            if (errors.length > 0) {
+              // FAILED: Construct the message
+              const message = `
+              ${botSignature}
+              ### ⚠️ PR Compliance Issues
+              To merge this PR, please fix the following:
+              
+              ${errors.map(e => `- ${e}`).join("\n")}
+              `;
 
-            if (checkSectionLength("## Testing Plan", 10)) {
-               core.setFailed("❌ Your 'Testing Plan' is empty. Please provide screenshots, videos, or reproduction steps.");
+              // Update existing or create new
+              if (previousComment) {
+                await github.rest.issues.updateComment({
+                  owner, repo, comment_id: previousComment.id, body: message
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: number, body: message
+                });
+              }
+
+              // Fail the action so merge is blocked
+              core.setFailed("PR Description is incomplete. See the bot comment for details.");
+            
+            } else {
+              // PASSED: Clean up previous errors!
+              if (previousComment) {
+                await github.rest.issues.deleteComment({
+                  owner, repo, comment_id: previousComment.id
+                });
+              }
+              console.log("✅ PR Description looks great!");
             }

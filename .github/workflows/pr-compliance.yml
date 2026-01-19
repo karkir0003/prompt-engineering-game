@@ -1,0 +1,72 @@
+name: PR Compliance
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  check-description:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR Body
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const body = context.payload.pull_request.body || "";
+            
+            // --- CHECK 1: Global Placeholder Check ---
+            if (body.includes("<TODO:")) {
+              core.setFailed("❌ You forgot to fill out the PR Template! Please remove all '<TODO:...>' placeholders.");
+              return; // Stop early
+            }
+
+            // --- CHECK 2: Required Sections Existence ---
+            const requiredHeaders = [
+              "Issue Link:",
+              "## Context",
+              "## Changes Made",
+              "## Testing Plan"
+            ];
+
+            const missingHeaders = requiredHeaders.filter(header => !body.includes(header));
+            if (missingHeaders.length > 0) {
+              core.setFailed(`❌ Missing required sections:\n${missingHeaders.map(h => `- ${h}`).join('\n')}`);
+              return;
+            }
+
+            // --- CHECK 3: Issue Link Validation ---
+            // Extract text after "Issue Link:" until the next newline
+            const issueLinkLine = body.split("Issue Link:")[1].split("\n")[0].trim();
+            
+            // Regex checks for a URL (http/s) OR a GitHub issue reference (#123)
+            // It rejects if the line is empty or just whitespace
+            const hasValidLink = /https?:\/\/.+|#\d+/.test(issueLinkLine);
+            
+            if (!hasValidLink) {
+               core.setFailed("❌ The 'Issue Link:' section appears empty or invalid. Please provide a URL or Issue #.");
+               return;
+            }
+
+            // --- CHECK 4: Section Content Validation ---
+            // Ensure specific sections aren't just headers with no text below them
+            
+            function checkSectionLength(header, minLength) {
+              // Get text between this header and the next header (##) or end of string
+              const content = body.split(header)[1].split("##")[0].trim();
+              if (content.length < minLength) {
+                 return true; // It IS too short
+              }
+              return false;
+            }
+
+            if (checkSectionLength("## Context", 10)) {
+               core.setFailed("❌ Your 'Context' section is too short. Please explain the 'Why'.");
+            }
+
+            if (checkSectionLength("## Changes Made", 5)) {
+               core.setFailed("❌ Your 'Changes Made' section is too short. Please list what you changed.");
+            }
+
+            if (checkSectionLength("## Testing Plan", 10)) {
+               core.setFailed("❌ Your 'Testing Plan' is empty. Please provide screenshots, videos, or reproduction steps.");
+            }

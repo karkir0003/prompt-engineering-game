@@ -73,6 +73,8 @@ export DOCKER_HOST="unix:///var/run/docker.sock"
 
 NOTE: This command will take a bit of time on the first run due to downloading the needed assets. 
 
+* **If the fixes above don't work and you're on colima**, you can run `yarn supabase:restart` to restart your local supabase container if you're making changes there
+
 You can refer to this [section](https://supabase.com/docs/guides/local-development/cli/getting-started?queryGroups=platform&platform=macos#access-your-projects-services) on how to access the project's services
 
 

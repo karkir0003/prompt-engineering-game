@@ -61,7 +61,7 @@ export async function getChallengeById(
 
   const { data: challenge, error } = await supabase
     .from("challenges")
-    .select("id, image_url")
+    .select("image_url")
     .eq("id", challengeId)
     .single();
 

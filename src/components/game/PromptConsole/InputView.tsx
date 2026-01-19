@@ -15,7 +15,7 @@ export function InputView({
 }: InputViewProps) {
   return (
     <div className="flex flex-col h-full justify-center max-w-xl mx-auto w-full space-y-8">
-            <p>Karthik</p>
+      <p>Karthik</p>
       <div className="space-y-2 text-center sm:text-left">
         <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 justify-center sm:justify-start">
           <Sparkles className="w-6 h-6 text-yellow-500" />

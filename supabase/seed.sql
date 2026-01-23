@@ -207,7 +207,7 @@ END $$;
 
 -- INSERT CHALLENGES
 INSERT INTO public.challenges (
-    id, date, unsplash_id, image_url, photographer_name, photographer_profile_url, photo_description, embedding
+    id, date, unsplash_id, image_url, photographer_name, photographer_profile_url, photo_description
 ) VALUES
     -- YESTERDAY'S CHALLENGE
     (
@@ -217,8 +217,7 @@ INSERT INTO public.challenges (
       'https://images.unsplash.com/photo-1444723121867-7a241cacace9?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       'Henning Witzel',
       'https://unsplash.com/@henning',
-      'Los Angeles by Night',
-      (SELECT array_agg((0.1 + (i::float / 1000))::float4)::vector FROM generate_series(1, 512) AS i)
+      'Los Angeles by Night'
     ),
     -- TODAY'S CHALLENGE
     (
@@ -228,8 +227,7 @@ INSERT INTO public.challenges (
       'https://images.unsplash.com/photo-1766864109448-3cb84647b818?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzY4MTY1MTA1fA&ixlib=rb-4.1.0&q=80&w=1080',
       'Maxim Tolchinskiy',
       'https://unsplash.com/@shaikhulud',
-      'Snowy park path lined with lampposts at night',
-      (SELECT array_agg((0.2 + (i::float / 1000))::float4)::vector FROM generate_series(1, 512) AS i)
+      'Snowy park path lined with lampposts at night'
     ),
     -- TOMORROW'S CHALLENGE (for testing date edge cases)
     (
@@ -239,14 +237,13 @@ INSERT INTO public.challenges (
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1470&auto=format&fit=crop',
       'Future Photographer',
       'https://unsplash.com/@future',
-      'Mountain landscape at sunset',
-      (SELECT array_agg((0.3 + (i::float / 1000))::float4)::vector FROM generate_series(1, 512) AS i)
+      'Mountain landscape at sunset'
     );
 
 -- INSERT GUESSES
 -- User 2 (newuser@example.com) has no guesses - testing empty state
 INSERT INTO public.guesses (
-    id, user_id, challenge_id, prompt, image_url, score, attempt_number
+    id, user_id, challenge_id, prompt, generated_image_url, score, attempt_number
 ) VALUES
     (gen_random_uuid(), '00000000-0000-0000-0000-000000000001'::uuid, 'c0000000-0000-0000-0000-000000000001'::uuid, 'Neon lights raining', 'https://placehold.co/600x400/png?text=Yesterday+Guess', 85, 1),
     (gen_random_uuid(), '00000000-0000-0000-0000-000000000001'::uuid, 'c0000000-0000-0000-0000-000000000002'::uuid, 'Books on a shelf', 'https://placehold.co/600x400/png?text=Today+Attempt+1', 45, 1),

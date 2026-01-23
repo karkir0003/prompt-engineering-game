@@ -1,12 +1,13 @@
 import "server-only";
 
 /**
- * Calculates CLIP similarity score by calling the scoring edge function
+ * Calculates CLIP similarity score by comparing the generated image 
+ * with the target challenge image
  * Throws an error if the score cannot be calculated
  */
 export async function calculateSimilarityScore(
-  challengeImageUrl: string,
-  userPrompt: string,
+  targetImageUrl: string,
+  generatedImageUrl: string,
   challengeId: string,
 ): Promise<{ score: number }> {
   try {
@@ -24,8 +25,8 @@ export async function calculateSimilarityScore(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        imageUrl: challengeImageUrl,
-        textPrompt: userPrompt,
+        imageUrl: targetImageUrl,
+        generatedImageUrl: generatedImageUrl,
         challengeId: challengeId,
       }),
     });

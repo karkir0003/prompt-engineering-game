@@ -12,6 +12,7 @@ import {
   getUserBestScore,
 } from "@/services/game-service";
 import { calculateSimilarityScore } from "@/services/scoring-service";
+import { generateImage } from "@/services/image-generation-service";
 
 // Formats the attempt message based on remaining attempts
 function formatAttemptMessage(attemptsLeft: number): string {
@@ -93,28 +94,43 @@ export async function submitGuess(
     };
   }
 
-  // Placeholder for generated image (TODO: Plug in Image Generation with FAL.AI FLUX)
-  const generatedImageUrl = challenge.image_url;
+  // Generate the image using Fal.ai first 
+  let generatedImageUrl: string;
+  try {
+    // Create a temporary guess ID for the edge function to update
+    const tempGuessId = crypto.randomUUID();
+    const imageResult = await generateImage(prompt, tempGuessId);
+    generatedImageUrl = imageResult.imageUrl;
+  } catch (error) {
+    console.error("Image generation failed:", error);
+    return {
+      success: false,
+      imageUrl: null,
+      score: 0,
+      message: "Failed to generate image. Please try again.",
+    };
+  }
 
-  // Calculate CLIP similarity score
+  // Step 2: Calculate CLIP similarity score between target and generated image
   let score: number;
   try {
     const result = await calculateSimilarityScore(
       challenge.image_url,
-      prompt,
+      generatedImageUrl,
       challengeId,
     );
     score = result.score;
-  } catch {
+  } catch (error) {
+    console.error("Score calculation failed:", error);
     return {
       success: false,
-      imageUrl: null,
+      imageUrl: generatedImageUrl,
       score: 0,
       message: "Unable to calculate score. Please try again.",
     };
   }
 
-  // Save the guess to the database
+  // Aave the guess with all data (image url and the score)
   const { guess, error: saveError } = await saveGuess({
     userId: user.id,
     challengeId,
@@ -127,7 +143,7 @@ export async function submitGuess(
   if (saveError || !guess) {
     return {
       success: false,
-      imageUrl: null,
+      imageUrl: generatedImageUrl,
       score: 0,
       message: `${saveError}. Please try again.`,
     };
@@ -139,7 +155,7 @@ export async function submitGuess(
 
   return {
     success: true,
-    imageUrl: challenge.image_url,
+    imageUrl: generatedImageUrl,
     score: score,
     message: formatAttemptMessage(attemptsLeft),
     attemptsLeft: attemptsLeft,

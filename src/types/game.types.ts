@@ -18,7 +18,7 @@ export interface Guess {
   user_id: string;
   challenge_id: string;
   prompt: string;
-  image_url: string;
+  generated_image_url: string | null; 
   score: number;
   attempt_number: number;
   created_at?: string;

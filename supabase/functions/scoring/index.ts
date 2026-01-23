@@ -2,7 +2,7 @@ import "@supabase/functions-js/edge-runtime.d.ts";
 
 interface RequestBody {
   imageUrl: string;
-  textPrompt: string;
+  generatedImageUrl: string;
   challengeId?: string;
 }
 
@@ -26,19 +26,23 @@ Deno.serve(async (req) => {
       throw new Error("Missing HUGGINGFACE_SPACE_URL");
     }
 
-    const { imageUrl, textPrompt, challengeId }: RequestBody = await req.json();
+    const { imageUrl, generatedImageUrl, challengeId }: RequestBody = await req.json();
 
-    if (!imageUrl || !textPrompt) {
+    if (!imageUrl || !generatedImageUrl) {
       return new Response(
-        JSON.stringify({ error: "imageUrl and textPrompt are required" }),
+        JSON.stringify({ error: "imageUrl and generatedImageUrl are required" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    console.log("Calculating CLIP similarity:", { imageUrl, textPrompt, challengeId });
+    console.log("Calculating CLIP similarity between target and generated image:", { 
+      imageUrl, 
+      generatedImageUrl, 
+      challengeId 
+    });
 
-    // Check for cached embedding
-    let imageEmbedding: number[] | null = null;
+    // Check for cached embedding of target image
+    let targetImageEmbedding: number[] | null = null;
     let shouldCache = false;
 
     if (challengeId && supabaseUrl && supabaseServiceKey) {
@@ -53,17 +57,17 @@ Deno.serve(async (req) => {
         .single();
 
       if (data?.embedding && Array.isArray(data.embedding)) {
-        console.log("Using cached image embedding");
-        imageEmbedding = data.embedding;
+        console.log("Using cached target image embedding");
+        targetImageEmbedding = data.embedding;
       } else {
         console.log("Will cache embedding after generation");
         shouldCache = true;
       }
     }
 
-    // Generate image embedding if not cached
-    if (!imageEmbedding) {
-      console.log("Calling HF Space for image embedding...");
+    // Generate target image embedding if not cached
+    if (!targetImageEmbedding) {
+      console.log("Calling HF Space for target image embedding...");
       
       const imgResponse = await fetch(`${hfSpaceUrl}/api/image-embedding`, {
         method: "POST",
@@ -80,80 +84,78 @@ Deno.serve(async (req) => {
       }
 
       const imgData = await imgResponse.json();
-      console.log("HF Space image response keys:", Object.keys(imgData));
-      console.log("Image embedding type:", typeof imgData.embedding);
+      console.log("HF Space target image response keys:", Object.keys(imgData));
       
       if (!imgData.embedding || !Array.isArray(imgData.embedding)) {
-        throw new Error(`Invalid image embedding format: ${JSON.stringify(imgData)}`);
+        throw new Error(`Invalid target image embedding format: ${JSON.stringify(imgData)}`);
       }
 
-      imageEmbedding = imgData.embedding;
-      console.log("Image embedding received, length:", imageEmbedding.length);
+      targetImageEmbedding = imgData.embedding;
+      console.log("Target image embedding received, length:", targetImageEmbedding.length);
 
       // Cache it
       if (shouldCache && challengeId && supabaseUrl && supabaseServiceKey) {
         try {
-          console.log("Caching image embedding...");
+          console.log("Caching target image embedding...");
           const { createClient } = await import("jsr:@supabase/supabase-js@2");
           const supabase = createClient(supabaseUrl, supabaseServiceKey);
           
           await supabase
             .from("challenges")
-            .update({ embedding: imageEmbedding })
+            .update({ embedding: targetImageEmbedding })
             .eq("id", challengeId);
           
-          console.log("Image embedding cached");
+          console.log("Target image embedding cached");
         } catch (cacheError) {
           console.error("Error caching embedding:", cacheError);
         }
       }
     }
 
-    // Generate text embedding
-    console.log("Calling HF Space for text embedding...");
-    const txtResponse = await fetch(`${hfSpaceUrl}/api/text-embedding`, {
+    // Generate embedding for the user's generated image
+    console.log("Calling HF Space for generated image embedding...");
+    const generatedImgResponse = await fetch(`${hfSpaceUrl}/api/image-embedding`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        text: textPrompt
+        image_url: generatedImageUrl
       }),
     });
 
-    if (!txtResponse.ok) {
-      const errorText = await txtResponse.text();
-      console.error("HF Space text error:", txtResponse.status, errorText);
-      throw new Error(`HF Space text error: ${txtResponse.status}`);
+    if (!generatedImgResponse.ok) {
+      const errorText = await generatedImgResponse.text();
+      console.error("HF Space generated image error:", generatedImgResponse.status, errorText);
+      throw new Error(`HF Space error: ${generatedImgResponse.status}`);
     }
 
-    const txtData = await txtResponse.json();
-    console.log("HF Space text response keys:", Object.keys(txtData));
-    console.log("Text embedding type:", typeof txtData.embedding);
+    const generatedImgData = await generatedImgResponse.json();
+    console.log("HF Space generated image response keys:", Object.keys(generatedImgData));
     
-    if (!txtData.embedding || !Array.isArray(txtData.embedding)) {
-      throw new Error(`Invalid text embedding format: ${JSON.stringify(txtData)}`);
+    if (!generatedImgData.embedding || !Array.isArray(generatedImgData.embedding)) {
+      throw new Error(`Invalid generated image embedding format: ${JSON.stringify(generatedImgData)}`);
     }
 
-    const textEmbedding = txtData.embedding;
-    console.log("Text embedding received, length:", textEmbedding.length);
+    const generatedImageEmbedding = generatedImgData.embedding;
+    console.log("Generated image embedding received, length:", generatedImageEmbedding.length);
 
     // Validate embeddings before similarity calculation
-    if (!imageEmbedding || !Array.isArray(imageEmbedding) || imageEmbedding.length === 0) {
-      throw new Error("Invalid image embedding");
+    if (!targetImageEmbedding || !Array.isArray(targetImageEmbedding) || targetImageEmbedding.length === 0) {
+      throw new Error("Invalid target image embedding");
     }
-    if (!textEmbedding || !Array.isArray(textEmbedding) || textEmbedding.length === 0) {
-      throw new Error("Invalid text embedding");
+    if (!generatedImageEmbedding || !Array.isArray(generatedImageEmbedding) || generatedImageEmbedding.length === 0) {
+      throw new Error("Invalid generated image embedding");
     }
 
-    // Cosine similarity calculation TODO: Update this to be cosine similarity between user generated image embedding and the target image embedding with image generation implementation
-    const score = similarityScore(imageEmbedding, textEmbedding);
+    // Calculate cosine similarity between target and generated image embeddings
+    const score = similarityScore(targetImageEmbedding, generatedImageEmbedding);
 
-    console.log("Score:", score);
+    console.log("Similarity score:", score);
 
     return new Response(
       JSON.stringify({
         success: true,
         score,
-        cached: !!imageEmbedding && !shouldCache,
+        cached: !!targetImageEmbedding && !shouldCache,
       }),
       {
         headers: {

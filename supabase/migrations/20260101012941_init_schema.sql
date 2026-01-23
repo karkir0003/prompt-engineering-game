@@ -1,3 +1,6 @@
+-- Enable pgvector extension for vector embeddings
+CREATE EXTENSION IF NOT EXISTS vector;
+
 -- Challenges Table for each daily challenge
 CREATE TABLE IF NOT EXISTS challenges (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -19,7 +22,7 @@ CREATE TABLE IF NOT EXISTS guesses (
   challenge_id uuid REFERENCES challenges(id) ON DELETE CASCADE NOT NULL,
   
   prompt text NOT NULL CHECK (char_length(prompt) <= 100),
-  image_url text NOT NULL,
+  generated_image_url text,
   score numeric CHECK (score >= 0 AND score <= 100),
   
   attempt_number integer NOT NULL CHECK (attempt_number >= 1 AND attempt_number <= 3),
@@ -29,12 +32,12 @@ CREATE TABLE IF NOT EXISTS guesses (
   UNIQUE(user_id, challenge_id, attempt_number)
 );
 
--- 3. INDEXES for common access patterns
+-- INDEXES for common access patterns
 CREATE INDEX IF NOT EXISTS idx_challenges_date ON challenges(date);
 CREATE INDEX IF NOT EXISTS idx_guesses_user_challenge ON guesses(user_id, challenge_id);
 CREATE INDEX IF NOT EXISTS idx_guesses_challenge_score ON guesses(challenge_id, score DESC);
 
--- 4. RLS to ensure user specific data is modified only by that user
+-- Enable RLS
 ALTER TABLE challenges ENABLE ROW LEVEL SECURITY;
 ALTER TABLE guesses ENABLE ROW LEVEL SECURITY;
 
@@ -44,6 +47,7 @@ DROP POLICY IF EXISTS "Users can view their own guesses" ON guesses;
 DROP POLICY IF EXISTS "Users can insert their own guesses" ON guesses;
 DROP POLICY IF EXISTS "Users can view all guesses for leaderboard" ON guesses;
 
+-- Challenges policies
 CREATE POLICY "Authenticated users can view challenges" 
   ON challenges 
   FOR SELECT 
@@ -54,11 +58,13 @@ CREATE POLICY "Authenticated users can view challenges"
 CREATE POLICY "Users can view their own guesses" 
   ON guesses 
   FOR SELECT 
+  TO authenticated
   USING (auth.uid() = user_id);
 
 CREATE POLICY "Users can insert their own guesses" 
   ON guesses 
   FOR INSERT 
+  TO authenticated
   WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can view all guesses for leaderboard"

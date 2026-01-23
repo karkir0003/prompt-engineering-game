@@ -80,7 +80,7 @@ export async function saveGuess(guessData: {
   userId: string;
   challengeId: string;
   prompt: string;
-  imageUrl: string;
+  imageUrl: string | null;
   score: number;
   attemptNumber: number;
 }): Promise<{ guess: Guess | null; error?: string }> {
@@ -92,7 +92,7 @@ export async function saveGuess(guessData: {
       user_id: guessData.userId,
       challenge_id: guessData.challengeId,
       prompt: guessData.prompt,
-      image_url: guessData.imageUrl,
+      generated_image_url: guessData.imageUrl,
       score: guessData.score,
       attempt_number: guessData.attemptNumber,
     })

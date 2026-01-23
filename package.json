@@ -10,6 +10,7 @@
     "prettier": "prettier",
     "supabase:gen-types": "supabase gen types typescript --local > src/types/supabase.ts",
     "supabase:restart": "./scripts/restart.sh",
+    "supabase:functions": "./scripts/local_supabase_functions.sh",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

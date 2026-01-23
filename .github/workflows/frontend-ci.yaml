@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - uses: actions/create-github-app-token@v2
@@ -38,6 +39,7 @@ jobs:
         run: yarn install --frozen-lockfile
       
       - name: Prettify code
+        id: prettier
         uses: creyD/prettier_action@v4.6
         with:
           github_token: ${{ steps.app-token.outputs.token }}
@@ -45,8 +47,57 @@ jobs:
           file_pattern: "src"
           prettier_options: --write **/*.{js,jsx,ts,tsx,json,yaml,yml,md,css,scss}
         
-      - name: Reinstall Dependencies (if needed)
+      - name: Reinstall Dependencies
         run: yarn install --frozen-lockfile
       
       - name: Run Linter
         run: yarn lint
+      
+      - name: Run Type Check
+        run: yarn type-check
+      
+      # --- 3. PREVIEW VERCEL DEPLOYMENT ---
+      # These steps ONLY run if:
+      # 1. We are on a Pull Request (not main)
+      # 2. All previous checks passed (Lint/Type Check)
+
+      - name: Install Vercel CLI
+        if: github.event_name == 'pull_request'
+        run: npm install --global vercel@latest
+      
+      - name: Pull Vercel Environment Info
+        if: github.event_name == 'pull_request'
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      
+      - name: Build Project Artifacts (Locally)
+        if: github.event_name == 'pull_request'
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      
+      - name: Deploy Preview to Vercel
+        if: github.event_name == 'pull_request'
+        id: deploy
+        run: |
+          URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$URL" >> $GITHUB_OUTPUT
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      
+      - name: Comment Preview URL
+        if: github.event_name == 'pull_request' && steps.deploy.outcome == 'success'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ **Preview Deployed!**\n\nVisit: ${{ steps.deploy.outputs.url }}'
+            })

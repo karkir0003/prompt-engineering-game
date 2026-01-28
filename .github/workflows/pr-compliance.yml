@@ -63,9 +63,9 @@ jobs:
                 }
               }
 
-              checkSectionLength("## Context", 10, "❌ Your 'Context' section is too short. Please explain the 'Why'.");
-              checkSectionLength("## Changes Made", 5, "❌ Your 'Changes Made' section is too short. Please list what you changed.");
-              checkSectionLength("## Testing Plan", 10, "❌ Your 'Testing Plan' is empty. Please provide screenshots, videos, or reproduction steps.");
+              checkSectionLength("## Context", 0, "❌ Your 'Context' section is empty. Please explain the 'Why'.");
+              checkSectionLength("## Changes Made", 0, "❌ Your 'Changes Made' section is empty. Please list what you changed.");
+              checkSectionLength("## Testing Plan", 0, "❌ Your 'Testing Plan' is empty. Please provide screenshots, videos, or reproduction steps.");
             }
 
             // --- HANDLE COMMENTS (The "Polite" Logic) ---

@@ -9,7 +9,11 @@ interface TargetViewerProps {
   photographerUrl: string;
 }
 
-export function TargetViewer({ imageUrl, photographer, photographerUrl }: TargetViewerProps) {
+export function TargetViewer({
+  imageUrl,
+  photographer,
+  photographerUrl,
+}: TargetViewerProps) {
   return (
     <Card className="relative overflow-hidden aspect-square h-full max-h-[600px] group border-border/50 p-0">
       <ImageDisplay src={imageUrl} alt="Target to replicate" priority />
@@ -25,7 +29,10 @@ export function TargetViewer({ imageUrl, photographer, photographerUrl }: Target
       </div>
 
       {/* Photographer Credit */}
-      <ImageAttribution photographer={photographer} photographerUrl={photographerUrl} />
+      <ImageAttribution
+        photographer={photographer}
+        photographerUrl={photographerUrl}
+      />
     </Card>
   );
 }

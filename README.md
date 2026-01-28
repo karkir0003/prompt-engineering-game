@@ -61,6 +61,7 @@ If you choose to use `colima`, follow the below instructions:
 3. Confirm with `colima status` that you see a message like `colima is running using macOS Virtualization.Framework`
 4. Run `supabase start`. NOTE: This command will take a bit of time on the first run due to downloading the needed assets. 
 5. Run `supabase stop` to stop the containers
+6. After supabase starts, run `yarn supabase:functions` to have a local runtime of the supabase edge functions.
 
 ##### General Troubleshooting
 * Check that `colima` is running via `colima status`
@@ -72,6 +73,8 @@ export DOCKER_HOST="unix:///var/run/docker.sock"
 * Make sure your supabase CLI is updated via `brew upgrade supabase`
 
 NOTE: This command will take a bit of time on the first run due to downloading the needed assets. 
+
+* **If the fixes above don't work and you're on colima**, you can run `yarn supabase:restart` to restart your local supabase container if you're making changes there
 
 You can refer to this [section](https://supabase.com/docs/guides/local-development/cli/getting-started?queryGroups=platform&platform=macos#access-your-projects-services) on how to access the project's services
 

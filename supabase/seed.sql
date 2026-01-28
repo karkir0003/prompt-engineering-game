@@ -205,7 +205,12 @@ BEGIN
   END IF;
 END $$;
 
--- INSERT CHALLENGES
+/*
+INSERT CHALLENGES
+
+When adding photographer_profile_url, follow the attribution guideline here:
+https://help.unsplash.com/en/articles/2511315-guideline-attribution 
+*/
 INSERT INTO public.challenges (
     id, date, unsplash_id, image_url, photographer_name, photographer_profile_url, photo_description, embedding
 ) VALUES
@@ -216,7 +221,7 @@ INSERT INTO public.challenges (
       'ukvgqriuOgo',
       'https://images.unsplash.com/photo-1444723121867-7a241cacace9?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       'Henning Witzel',
-      'https://unsplash.com/@henning',
+      'https://unsplash.com/@henning?utm_source=promptle&utm_medium=referral',
       'Los Angeles by Night',
       (SELECT array_agg((0.1 + (i::float / 1000))::float4)::vector FROM generate_series(1, 512) AS i)
     ),
@@ -227,7 +232,7 @@ INSERT INTO public.challenges (
       'GA2y1XU9bIw',
       'https://images.unsplash.com/photo-1766864109448-3cb84647b818?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzY4MTY1MTA1fA&ixlib=rb-4.1.0&q=80&w=1080',
       'Maxim Tolchinskiy',
-      'https://unsplash.com/@shaikhulud',
+      'https://unsplash.com/@shaikhulud?utm_source=promptle&utm_medium=referral',
       'Snowy park path lined with lampposts at night',
       (SELECT array_agg((0.2 + (i::float / 1000))::float4)::vector FROM generate_series(1, 512) AS i)
     ),
@@ -238,7 +243,7 @@ INSERT INTO public.challenges (
       'abcdefghijk',
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1470&auto=format&fit=crop',
       'Future Photographer',
-      'https://unsplash.com/@future',
+      'https://unsplash.com/@future?utm_source=promptle&utm_medium=referral',
       'Mountain landscape at sunset',
       (SELECT array_agg((0.3 + (i::float / 1000))::float4)::vector FROM generate_series(1, 512) AS i)
     );

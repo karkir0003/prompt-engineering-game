@@ -42,6 +42,16 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const unsplashKey = Deno.env.get('UNSPLASH_ACCESS_KEY') ?? ''
     const clipServiceUrl = Deno.env.get('HUGGINGFACE_SPACE_URL') ?? ''
+    let unsplashUtmTags = {utm_source: "promptle", utm_medium: "referral"}
+
+    try {
+      const tagsString = Deno.env.get('UNSPLASH_UTM_TAGS');
+      if (tagsString) {
+        unsplashUtmTags = JSON.parse(tagsString);
+      }
+    } catch (e) {
+      console.warn('Using default UTM tags');
+    }
     
     // Validate environment variables
     if (!supabaseUrl || !supabaseServiceKey) {
@@ -110,6 +120,18 @@ Deno.serve(async (req) => {
       },
     })
 
+    // Append UTM parameters to photographer profile URL
+    let photographerProfileUrl = photo.user.links.html;
+    try {
+      const urlObj = new URL(photographerProfileUrl);
+      for (const [key, value] of Object.entries(unsplashUtmTags)) {
+        urlObj.searchParams.set(key, value as string);
+      }
+      photographerProfileUrl = urlObj.toString();
+    } catch (e) {
+      console.error('Error appending attribution to photographer URL, using raw link as fallback', e);
+    }
+
     // Generate CLIP embedding using your Hugging Face Space
     console.log('Generating CLIP embedding using clip-embedding-service...')
     
@@ -154,7 +176,7 @@ Deno.serve(async (req) => {
         image_url: photo.urls.regular,
         unsplash_id: photo.id,
         photographer_name: photo.user.name,
-        photographer_profile_url: photo.user.links.html,
+        photographer_profile_url: photographerProfileUrl,
         embedding: embeddingArray
       })
       .select()
